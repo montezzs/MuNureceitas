@@ -88,28 +88,30 @@
 
   // ========== COUNTDOWN (contagem regressiva que desce) ==========
   function cdStart(minutes){
-    // minutes pode ser 0 ou número
-    const mins = Math.max(0, Math.floor(minutes || 0));
-    // limpar intervalo anterior (evita sobreposição)
-    if(cdInterval) clearInterval(cdInterval);
-    cdSeconds = mins * 60;
-    cdRunning = true;
-    updateCountdownUI();
+  const mins = Math.max(0, Math.floor(minutes || 0));
+  if(cdInterval) clearInterval(cdInterval);
+  cdSeconds = mins * 60;
+  cdRunning = true;
+  updateCountdownUI();
 
-    cdInterval = setInterval(()=>{
-      cdSeconds--;
-      updateCountdownUI();
-      if(cdSeconds <= 0){
-        clearInterval(cdInterval);
-        cdInterval = null;
-        cdRunning = false;
-        // tocar som
-        playBeep();
-        // pequena notificação visual
-        try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
-      }
-    }, 1000);
-  }
+  cdInterval = setInterval(()=>{
+    // se chegou a zero ou menos, parar imediatamente antes de atualizar
+    if(cdSeconds <= 0){
+      clearInterval(cdInterval);
+      cdInterval = null;
+      cdRunning = false;
+      cdSeconds = 0; // garante que exiba 00:00
+      updateCountdownUI(); // atualiza para o zero real
+      playBeep();
+      try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
+      return; // encerra a execução desta iteração
+    }
+
+    // só chega aqui se ainda há tempo
+    cdSeconds--;
+    updateCountdownUI();
+  }, 1000);
+}
 
   function cdStop(){
     if(cdInterval) clearInterval(cdInterval);

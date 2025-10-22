@@ -288,6 +288,7 @@ a, ul {
   margin: 0;
   list-style-type: none;
   text-decoration: none;
+  color: var(--accent);
 }
 
 .card a:visited {
