@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MuNu Receitas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="icon"><img src="img/limao-icon.svg" alt="limao" style="width:24px;height:24px;display:block"></div>
+      <div>
+        <h1>MuNu Receitas</h1>
+        <p>Receitas simples e gostosas</p>
+      </div>
+    </div>
+    <nav class="main-nav"><button id="navToggle" aria-label="Abrir menu">☰</button>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="bololimao.html">Bolo de Limão</a></li>
+        <li><a href="bolocenoura.html">Bolo de Cenoura</a></li>
+        <li><a href="strogonoff.html">Strogonoff de Frango</a></li>
+        <li><a href="torta.html">Torta de Frango</a></li>
+        <li><a href="brigadeiro.html">Brigadeiro</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Bem-vindo ao MuNu Receitas</h2>
+      <p>Receitas testadas, fáceis e explicadas passo a passo.</p>
+      <div class="marketing-videos">
+        <div class="video-box card">
+          <h4>Patrocinador • 1 </h4><video controls muted loop src=""></video>
+          <p class="kv">Rápido e saboroso.</p>
+        </div>
+        <div class="video-box card">
+          <h4>Patrocinador • 2 </h4><video controls muted loop src=""></video>
+          <p class="kv">Utensílios que facilitam sua vida.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="card">
+        <h3>Cronômetro</h3>
+        <p>Use o cronômetro global do site.</p>
+        <div class="timer-box">
+          <div id="timerDisplay">00:00</div>
+          <div style="display:flex;gap:8px;margin-top:8px;"><button id="start" class="btn">Iniciar</button><button
+              id="pause" class="btn">Pausar</button><button id="reset" class="btn">Zerar</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Receitas</h3>
+        <ul style="margin-top:8px">
+          <li><a href="bololimao.html">Bolo de Limão</a></li>
+          <li><a href="bolocenoura.html">Bolo de Cenoura</a></li>
+          <li><a href="strogonoff.html">Strogonoff de Frango</a></li>
+          <li><a href="torta.html">Torta de Frango</a></li>
+          <li><a href="brigadeiro.html">Brigadeiro</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Contagem</h3>
+        <p>Contagem rápida para descansos.</p><input id="countMinutes" type="number" min="1" value="5"
+          style="width:70px;padding:6px;border-radius:8px;border:1px solid #e6f0ff">
+        <div style="margin-top:8px;"><button id="startCountdown" class="btn">Iniciar Contagem</button></div>
+        <div id="countdownDisplay" style="margin-top:8px;font-weight:700">05:00</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 MuNu Receitas — Todos os direitos reservados para Samuel Montez e Manuela Correia</p>
+  </footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/rotate.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/backToTop.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/mouseEffects.js"></script>
+  <script src="js/recipeUtils.js"></script>
+</body>
+
+</html>

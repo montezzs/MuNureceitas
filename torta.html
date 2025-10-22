@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Torta de Frango Cremosa · MuNu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="icon"><img src="img/limao-icon.svg" alt="limao" style="width:22px;height:22px;display:block"></div>
+      <div>
+        <h1>MuNu Receitas</h1>
+        <p>Receitas simples e gostosas</p>
+      </div>
+    </div>
+    <nav class="main-nav"><button id="navToggle" aria-label="Abrir menu">☰</button>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="bololimao.html">Bolo de Limão</a></li>
+        <li><a href="bolocenoura.html">Bolo de Cenoura</a></li>
+        <li><a href="strogonoff.html">Strogonoff de Frango</a></li>
+        <li><a href="torta.html">Torta de Frango</a></li>
+        <li><a href="brigadeiro.html">Brigadeiro</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="recipe">
+      <div class="recipe-main">
+        <img src="img/placeholder_torta.jpg" alt="Torta de Frango Cremosa">
+        <h2>Torta de Frango Cremosa</h2>
+        <p><strong>Rendimento:</strong> 8 porções • <strong>Preparo:</strong> 1 hora • <strong>Dificuldade:</strong>
+          Médio</p>
+        <h3>Ingredientes</h3>
+        <ul class="ingredients">
+          <li>1 kg de peito de frango cozido e desfiado</li>
+          <li>1 cebola picada</li>
+          <li>2 dentes de alho</li>
+          <li>1/2 xícara de azeitonas fatiadas</li>
+          <li>2 colheres de requeijão</li>
+          <li>3 ovos</li>
+          <li>2 xícaras de farinha de trigo</li>
+          <li>1 xícara de leite</li>
+          <li>1 colher (sopa) de fermento</li>
+          <li>Sal e pimenta</li>
+        </ul>
+        <h3>Modo de Preparo</h3>
+        <ol class="preparation">
+          <li>Refogue a cebola e o alho até translúcidos.</li>
+          <li>Adicione o frango desfiado, azeitonas e requeijão; corrija o sal.</li>
+          <li>Prepare a massa batendo ovos, leite, farinha e fermento.</li>
+          <li>Na forma untada, coloque metade da massa, o recheio e cubra com o restante.</li>
+          <li>Asse em forno médio por 35–40 minutos até dourar.</li>
+        </ol>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" onclick="startTimerFromRecipe(60)">Iniciar cronômetro 60 min</button>
+          <button class="btn" onclick="copyIngredients()">Copiar ingredientes</button>
+          <a class="btn" href="index.html">Voltar</a>
+        </div>
+      </div>
+
+      <aside class="recipe-aside">
+        <h4>Informações</h4>
+        <p><strong>Por que funciona:</strong> Receita clara e fácil de seguir.</p>
+        <div style="margin-top:12px">
+          <div class="timer-box">
+            <div id="timerDisplay">00:00</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button id="start" class="btn">Iniciar</button>
+              <button id="pause" class="btn">Pausar</button>
+              <button id="reset" class="btn">Zerar</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 MuNu Receitas</p>
+  </footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/rotate.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/backToTop.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/mouseEffects.js"></script>
+  <script src="js/recipeUtils.js"></script>
+</body>
+
+</html>

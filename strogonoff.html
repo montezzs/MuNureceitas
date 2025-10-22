@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Strogonoff de Frango Cremoso · MuNu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="icon"><img src="img/limao-icon.svg" alt="limao" style="width:22px;height:22px;display:block"></div>
+      <div>
+        <h1>MuNu Receitas</h1>
+        <p>Receitas simples e gostosas</p>
+      </div>
+    </div>
+    <nav class="main-nav"><button id="navToggle" aria-label="Abrir menu">☰</button>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="bololimao.html">Bolo de Limão</a></li>
+        <li><a href="bolocenoura.html">Bolo de Cenoura</a></li>
+        <li><a href="strogonoff.html">Strogonoff de Frango</a></li>
+        <li><a href="torta.html">Torta de Frango</a></li>
+        <li><a href="brigadeiro.html">Brigadeiro</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <main class="container">
+    <article class="recipe">
+      <div class="recipe-main">
+        <img src="img/placeholder_strogonoff.jpg" alt="Strogonoff de Frango Cremoso">
+        <h2>Strogonoff de Frango Cremoso</h2>
+        <p><strong>Rendimento:</strong> 4 porções • <strong>Preparo:</strong> 30 minutos • <strong>Dificuldade:</strong>
+          Médio</p>
+        <h3>Ingredientes</h3>
+        <ul class="ingredients">
+          <li>500 g de peito de frango em tiras</li>
+          <li>1 cebola picada</li>
+          <li>2 dentes de alho picados</li>
+          <li>200 g de champignon fatiado</li>
+          <li>1 colher (sopa) de manteiga</li>
+          <li>1 colher (sopa) de ketchup</li>
+          <li>1 colher (sopa) de mostarda</li>
+          <li>200 ml de creme de leite</li>
+          <li>Sal e pimenta a gosto</li>
+        </ul>
+        <h3>Modo de Preparo</h3>
+        <ol class="preparation">
+          <li>Tempere o frango com sal e pimenta.</li>
+          <li>Refogue a cebola e o alho na manteiga até dourar.</li>
+          <li>Acrescente o frango e frite até cozido.</li>
+          <li>Adicione champignon, ketchup e mostarda e misture.</li>
+          <li>Por fim, coloque o creme de leite e ajuste o sal. Sirva com arroz e batata palha.</li>
+        </ol>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" onclick="startTimerFromRecipe(30)">Iniciar cronômetro 30 min</button>
+          <button class="btn" onclick="copyIngredients()">Copiar ingredientes</button>
+          <a class="btn" href="index.html">Voltar</a>
+        </div>
+      </div>
+
+      <aside class="recipe-aside">
+        <h4>Informações</h4>
+        <p><strong>Por que funciona:</strong> Receita clara e fácil de seguir.</p>
+        <div style="margin-top:12px">
+          <div class="timer-box">
+            <div id="timerDisplay">00:00</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button id="start" class="btn">Iniciar</button>
+              <button id="pause" class="btn">Pausar</button>
+              <button id="reset" class="btn">Zerar</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 MuNu Receitas</p>
+  </footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/rotate.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/backToTop.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/mouseEffects.js"></script>
+  <script src="js/recipeUtils.js"></script>
+</body>
+
+</html>
