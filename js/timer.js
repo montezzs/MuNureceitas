@@ -1,6 +1,5 @@
 // js/timer.js
-// Cronômetro e contagem regressiva - corrigido
-// IA: trechos de utilidade criados/ajustados com ajuda da IA.
+// Cronômetro e contagem regressiva - versão corrigida e melhorada
 
 (function(){
   // Estado do stopwatch (cronômetro que sobe)
@@ -13,59 +12,77 @@
   let cdSeconds = 0;
   let cdRunning = false;
 
-  // Seletores que aparecem nas páginas
-  const stopwatchDisplays = () => document.querySelectorAll('#timerDisplay'); // mostra o tempo atual (usado como display genérico)
-  const countdownDisplays = () => document.querySelectorAll('#countdownDisplay'); // display para o widget de contagem rápida na index
+  // Reuse do AudioContext para tocar beep (evita criar muitos ctx)
+  let audioCtx = null;
 
-  // Formatação mm:ss
+  // --- Seletores ---
+  // Nota: ideal usar classes (ex: .timerDisplay) em vez de IDs múltiplos.
+  const getStopwatchDisplays = () => document.querySelectorAll('#timerDisplay');
+  const getCountdownDisplays = () => document.querySelectorAll('#countdownDisplay');
+
+  // --- Formatação mm:ss ---
   function fmt(s){
+    s = Math.max(0, Math.floor(s));
     const m = Math.floor(s/60).toString().padStart(2,'0');
     const sec = (s%60).toString().padStart(2,'0');
     return `${m}:${sec}`;
   }
 
-  // Atualiza todos os displays de stopwatch (id="timerDisplay")
+  // --- UI updates ---
   function updateStopwatchUI(){
-    stopwatchDisplays().forEach(el => el.textContent = fmt(swSeconds));
+    const text = fmt(swSeconds);
+    getStopwatchDisplays().forEach(el => el.textContent = text);
   }
 
-  // Atualiza os displays de countdown (id="countdownDisplay") e também #timerDisplay (para quando usamos countdown em receitas)
   function updateCountdownUI(){
-    // atualiza displays específicos de countdown
-    countdownDisplays().forEach(el => el.textContent = fmt(cdSeconds));
-    // também atualiza displays genéricos (por exemplo, o painel da receita que utiliza id="timerDisplay")
-    stopwatchDisplays().forEach(el => el.textContent = fmt(cdSeconds));
+    const text = fmt(cdSeconds);
+    // importante: atualiza apenas os displays específicos de countdown
+    getCountdownDisplays().forEach(el => el.textContent = text);
+    // ---- removi a atualização de #timerDisplay aqui para evitar conflito com o stopwatch ----
   }
 
-  // Play beep simples com Web Audio API (sem arquivos externos)
-  function playBeep(){
+  // --- Beep com Web Audio API (reuso do contexto) ---
+  async function playBeep(){
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if(audioCtx.state === 'suspended'){
+        try { await audioCtx.resume(); } catch(e){ /* ignore */ }
+      }
+
+      const ctx = audioCtx;
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = 'sine';
-      o.frequency.value = 880; // tom
+      o.frequency.value = 880;
       o.connect(g);
       g.connect(ctx.destination);
-      g.gain.value = 0.0001;
-      // ataque rápido
+
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
-      o.start();
-      // decaimento
+      o.start(ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.7);
       o.stop(ctx.currentTime + 0.75);
+
+      // se quiser fechar o contexto, pode fazer após 1s, mas deixei comentado
+      // setTimeout(() => { try { audioCtx.close(); audioCtx = null; } catch(e){} }, 1000);
+
     } catch(e){
-      // fallback silencioso (alguns navegadores bloqueiam até interação)
       console.warn('Beep não disponível:', e);
     }
   }
 
-  // ========== STOPWATCH (cronômetro que sobe) ==========
+  // ========== STOPWATCH ==========
   function swStart(){
     if(swRunning) return;
     swRunning = true;
-    // garantir que o stopwatch não conflite com countdown (não pausa automaticamente, apenas separa estados)
+
     if(swInterval) clearInterval(swInterval);
+
+    // atualiza UI imediatamente (evita 1s de atraso visual)
+    updateStopwatchUI();
+
     swInterval = setInterval(()=>{
       swSeconds++;
       updateStopwatchUI();
@@ -73,49 +90,69 @@
   }
 
   function swPause(){
-    if(swInterval) clearInterval(swInterval);
+    if(swInterval) {
+      clearInterval(swInterval);
+      swInterval = null;
+    }
     swRunning = false;
-    swInterval = null;
   }
 
   function swReset(){
-    if(swInterval) clearInterval(swInterval);
-    swInterval = null;
+    if(swInterval) {
+      clearInterval(swInterval);
+      swInterval = null;
+    }
     swRunning = false;
     swSeconds = 0;
     updateStopwatchUI();
   }
 
-  // ========== COUNTDOWN (contagem regressiva que desce) ==========
+  // ========== COUNTDOWN ==========
   function cdStart(minutes){
-  const mins = Math.max(0, Math.floor(minutes || 0));
-  if(cdInterval) clearInterval(cdInterval);
-  cdSeconds = mins * 60;
-  cdRunning = true;
-  updateCountdownUI();
+    // Ao iniciar o countdown, PAUSAR o stopwatch para evitar conflito de displays
+    swPause();
 
-  cdInterval = setInterval(()=>{
-    // se chegou a zero ou menos, parar imediatamente antes de atualizar
-    if(cdSeconds <= 0){
+    // aceita minutos inteiros ou decimais; transforma em inteiro de minutos >= 0
+    const mins = Math.max(0, Math.floor(Number(minutes || 0)));
+    if(cdInterval) {
       clearInterval(cdInterval);
       cdInterval = null;
+    }
+    cdSeconds = mins * 60;
+    cdRunning = true;
+    updateCountdownUI();
+
+    // Se já for zero, trate imediatamente sem criar intervalo
+    if(cdSeconds <= 0){
       cdRunning = false;
-      cdSeconds = 0; // garante que exiba 00:00
-      updateCountdownUI(); // atualiza para o zero real
+      cdSeconds = 0;
+      updateCountdownUI();
       playBeep();
       try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
-      return; // encerra a execução desta iteração
+      return;
     }
 
-    // só chega aqui se ainda há tempo
-    cdSeconds--;
-    updateCountdownUI();
-  }, 1000);
-}
+    cdInterval = setInterval(()=>{
+      if(cdSeconds <= 0){
+        clearInterval(cdInterval);
+        cdInterval = null;
+        cdRunning = false;
+        cdSeconds = 0;
+        updateCountdownUI();
+        playBeep();
+        try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
+        return;
+      }
+      cdSeconds--;
+      updateCountdownUI();
+    }, 1000);
+  }
 
   function cdStop(){
-    if(cdInterval) clearInterval(cdInterval);
-    cdInterval = null;
+    if(cdInterval){
+      clearInterval(cdInterval);
+      cdInterval = null;
+    }
     cdRunning = false;
   }
 
@@ -125,10 +162,8 @@
     updateCountdownUI();
   }
 
-  // Expor funções globais
+  // ========== Expor funções globais (compatibilidade) ==========
   window.startTimerGlobal = function(minutes){
-    // mantive compatibilidade: se receber minutes > 0, inicia o stopwatch com valor inicial (como antes),
-    // mas para a funcionalidade pedida de receitas, usaremos startCountdownFromRecipe (ver recipeUtils).
     if(typeof minutes === 'number' && minutes > 0){
       swSeconds = Math.max(0, Math.floor(minutes) * 60);
       updateStopwatchUI();
@@ -139,14 +174,13 @@
   window.pauseTimerGlobal = swPause;
   window.resetTimerGlobal = swReset;
 
-  // Funções para contagem regressiva (índice e receitas)
   window.startCountdownGlobal = function(minutes){
     cdStart(minutes);
   };
   window.pauseCountdownGlobal = cdStop;
   window.resetCountdownGlobal = cdReset;
 
-  // Atalhos por clique em botões que usam ids comuns (compatibilidade com estrutura HTML atual)
+  // Atalhos por clique
   document.addEventListener('click', function(e){
     const id = e.target && e.target.id;
     if(!id) return;
@@ -155,6 +189,10 @@
     if(id === 'reset') swReset();
   });
 
-  // Inicializa displays ao carregar (mostra 00:00)
-  document.addEventListener('DOMContentLoaded', function(){ updateStopwatchUI(); updateCountdownUI(); });
+  // Inicializa displays ao carregar
+  document.addEventListener('DOMContentLoaded', function(){
+    updateStopwatchUI();
+    updateCountdownUI();
+  });
+
 })();
