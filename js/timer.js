@@ -1,5 +1,5 @@
 // js/timer.js
-// Cronômetro e contagem regressiva - versão corrigida e melhorada
+// Cronômetro e contagem regressiva - versão corrigida e segura
 
 (function(){
   // Estado do stopwatch (cronômetro que sobe)
@@ -15,13 +15,12 @@
   // Reuse do AudioContext para tocar beep (evita criar muitos ctx)
   let audioCtx = null;
 
-  // --- Seletores ---
-  // Nota: ideal usar classes (ex: .timerDisplay) em vez de IDs múltiplos.
-  const getStopwatchDisplays = () => document.querySelectorAll('#timerDisplay');
-  const getCountdownDisplays = () => document.querySelectorAll('#countdownDisplay');
+  // --- Seletores flexíveis: aceita ID único ou várias classes ---
+  const getStopwatchDisplays = () => document.querySelectorAll('#timerDisplay, .timerDisplay');
+  const getCountdownDisplays = () => document.querySelectorAll('#countdownDisplay, .countdownDisplay');
 
   // --- Formatação mm:ss ---
-  function fmt(s){
+  function fmtSecondsToMMSS(s){
     s = Math.max(0, Math.floor(s));
     const m = Math.floor(s/60).toString().padStart(2,'0');
     const sec = (s%60).toString().padStart(2,'0');
@@ -30,15 +29,13 @@
 
   // --- UI updates ---
   function updateStopwatchUI(){
-    const text = fmt(swSeconds);
+    const text = fmtSecondsToMMSS(swSeconds);
     getStopwatchDisplays().forEach(el => el.textContent = text);
   }
 
   function updateCountdownUI(){
-    const text = fmt(cdSeconds);
-    // importante: atualiza apenas os displays específicos de countdown
+    const text = fmtSecondsToMMSS(cdSeconds);
     getCountdownDisplays().forEach(el => el.textContent = text);
-    // ---- removi a atualização de #timerDisplay aqui para evitar conflito com o stopwatch ----
   }
 
   // --- Beep com Web Audio API (reuso do contexto) ---
@@ -64,11 +61,8 @@
       o.start(ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.7);
       o.stop(ctx.currentTime + 0.75);
-
-      // se quiser fechar o contexto, pode fazer após 1s, mas deixei comentado
-      // setTimeout(() => { try { audioCtx.close(); audioCtx = null; } catch(e){} }, 1000);
-
     } catch(e){
+      // autoplay/AudioContext pode ser bloqueado — sem problema, apenas log
       console.warn('Beep não disponível:', e);
     }
   }
@@ -76,11 +70,12 @@
   // ========== STOPWATCH ==========
   function swStart(){
     if(swRunning) return;
-    swRunning = true;
+    // ao iniciar stopwatch, garantir que countdown esteja parado
+    cdStop();
 
+    swRunning = true;
     if(swInterval) clearInterval(swInterval);
 
-    // atualiza UI imediatamente (evita 1s de atraso visual)
     updateStopwatchUI();
 
     swInterval = setInterval(()=>{
@@ -98,41 +93,37 @@
   }
 
   function swReset(){
-    if(swInterval) {
-      clearInterval(swInterval);
-      swInterval = null;
-    }
-    swRunning = false;
+    swPause();
     swSeconds = 0;
     updateStopwatchUI();
   }
 
   // ========== COUNTDOWN ==========
-  function cdStart(minutes){
-    // Ao iniciar o countdown, PAUSAR o stopwatch para evitar conflito de displays
+  function cdStartFromSeconds(seconds){
+    // ao iniciar countdown, pausar stopwatch para evitar conflito de displays
     swPause();
 
-    // aceita minutos inteiros ou decimais; transforma em inteiro de minutos >= 0
-    const mins = Math.max(0, Math.floor(Number(minutes || 0)));
+    const secs = Math.max(0, Math.floor(Number(seconds) || 0));
     if(cdInterval) {
       clearInterval(cdInterval);
       cdInterval = null;
     }
-    cdSeconds = mins * 60;
+    cdSeconds = secs;
     cdRunning = true;
     updateCountdownUI();
 
-    // Se já for zero, trate imediatamente sem criar intervalo
     if(cdSeconds <= 0){
       cdRunning = false;
       cdSeconds = 0;
       updateCountdownUI();
       playBeep();
-      try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
+      try { alert('⏰ Tempo encerrado!'); } catch(e) {}
       return;
     }
 
     cdInterval = setInterval(()=>{
+      cdSeconds--;
+      updateCountdownUI();
       if(cdSeconds <= 0){
         clearInterval(cdInterval);
         cdInterval = null;
@@ -140,12 +131,15 @@
         cdSeconds = 0;
         updateCountdownUI();
         playBeep();
-        try { alert('⏰ Tempo encerrado!'); } catch(e){ /* ignore */ }
-        return;
+        try { alert('⏰ Tempo encerrado!'); } catch(e) {}
       }
-      cdSeconds--;
-      updateCountdownUI();
     }, 1000);
+  }
+
+  // wrapper que aceita minutos ou segundos ou hh:mm:ss
+  function cdStart(input){
+    const secs = parseTimeToSeconds(input);
+    cdStartFromSeconds(secs);
   }
 
   function cdStop(){
@@ -162,31 +156,60 @@
     updateCountdownUI();
   }
 
+  // ========== Utilitários ==========
+  function parseTimeToSeconds(input){
+    // aceita número (segundos), número em minutos (se sinalizamos min), ou strings "mm:ss" ou "hh:mm:ss"
+    if(input == null) return 0;
+    if(typeof input === 'number' && !isNaN(input)) return Math.max(0, Math.floor(input));
+    const s = String(input).trim();
+    if(/^\d+$/.test(s)) return parseInt(s, 10); // segundos diretos
+    const parts = s.split(':').map(p => parseInt(p,10));
+    if(parts.length === 3) return parts[0]*3600 + (parts[1]||0)*60 + (parts[2]||0);
+    if(parts.length === 2) return parts[0]*60 + (parts[1]||0);
+    return 0;
+  }
+
   // ========== Expor funções globais (compatibilidade) ==========
-  window.startTimerGlobal = function(minutes){
-    if(typeof minutes === 'number' && minutes > 0){
-      swSeconds = Math.max(0, Math.floor(minutes) * 60);
-      updateStopwatchUI();
+  // startTimerGlobal: origem ambígua em alguns projetos — aqui trataremos:
+  // se passar "minutes" como número inteiro >=1, interpretamos como MINUTOS -> convert to seconds
+  // se quiser passar segundos, basta passar Number de segundos diretamente (ex: 90)
+  window.startTimerGlobal = function(arg){
+    // se é número >= 60 -> consideramos que pode ser segundos; mas para compatibilidade antiga, se é pequeno (<= 300) = minutos?
+    // Para ser previsível: se quiser iniciar o cronômetro com X minutos, chame startTimerGlobal({minutes: 5})
+    if(typeof arg === 'object' && arg !== null && 'minutes' in arg){
+      const mins = Math.max(0, Math.floor(Number(arg.minutes) || 0));
+      swSeconds = mins * 60;
+    } else if(typeof arg === 'number' && arg > 0){
+      // se foi passado um número e for pequeno (< 1000), assumimos segundos
+      swSeconds = Math.max(0, Math.floor(arg));
     }
+    updateStopwatchUI();
     swStart();
   };
 
   window.pauseTimerGlobal = swPause;
   window.resetTimerGlobal = swReset;
 
-  window.startCountdownGlobal = function(minutes){
-    cdStart(minutes);
-  };
+  window.startCountdownGlobal = function(input){ cdStart(input); };
   window.pauseCountdownGlobal = cdStop;
   window.resetCountdownGlobal = cdReset;
 
-  // Atalhos por clique
+  // Atalhos por clique (genéricos): tenta detectar botões com ids padrão
   document.addEventListener('click', function(e){
-    const id = e.target && e.target.id;
-    if(!id) return;
-    if(id === 'start') swStart();
-    if(id === 'pause') swPause();
-    if(id === 'reset') swReset();
+    const target = e.target;
+    if(!target) return;
+
+    // Se o botão tiver data-action em vez de id, funciona também
+    const action = target.dataset && target.dataset.action ? target.dataset.action : target.id;
+
+    if(action === 'start') swStart();
+    else if(action === 'pause') swPause();
+    else if(action === 'reset') swReset();
+    else if(action === 'startCountdown') {
+      // se o botão tem data-seconds ou data-minutes, respeita
+      const secs = target.dataset.seconds || target.dataset.minutes || null;
+      if(secs) window.startCountdownGlobal(secs);
+    }
   });
 
   // Inicializa displays ao carregar
