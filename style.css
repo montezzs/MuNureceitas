@@ -221,6 +221,34 @@ body {
   box-shadow: var(--shadow)
 }
 
+#quizReceita:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(var(--accent), 0.4);
+  }
+
+  #quizReceita button {
+    background-color: var(--accent);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 1.2s ease-in-out;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text);
+  }
+
+  #quizReceita button:hover {
+    transform: scale(1.1);
+  }
+
+  #pergunta {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+  }
+
 .recipe-aside {
   background: var(--card);
   padding: 14px;
