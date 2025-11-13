@@ -31,7 +31,7 @@
 
   <main class="container">
     <article class="recipe">
-      <div class="recipe-main">
+      <div class="recipe-main" style="translate: 175px 0px">
         <img src="img/torta.jpeg" alt="Torta de Frango Cremosa">
         <h2>Torta de Frango Cremosa</h2>
         <p><strong>Rendimento:</strong> 8 porções • <strong>Preparo:</strong> 1 hora • <strong>Dificuldade:</strong>
@@ -58,26 +58,11 @@
           <li>Asse em forno médio por 35–40 minutos até dourar.</li>
         </ol>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn" onclick="startTimerFromRecipe(60)">Iniciar cronômetro 60 min</button>
           <button class="btn" onclick="copyIngredients()">Copiar ingredientes</button>
           <a class="btn" href="index.html">Voltar</a>
         </div>
       </div>
 
-      <aside class="recipe-aside">
-        <h4>Informações</h4>
-        <p><strong>Por que funciona:</strong> Receita clara e fácil de seguir.</p>
-        <div style="margin-top:12px">
-          <div class="timer-box">
-            <div id="timerDisplay">00:00</div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <button id="start" class="btn">Iniciar</button>
-              <button id="pause" class="btn">Pausar</button>
-              <button id="reset" class="btn">Zerar</button>
-            </div>
-          </div>
-        </div>
-      </aside>
     </article>
   </main>
 

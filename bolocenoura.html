@@ -31,8 +31,8 @@
 
   <main class="container">
     <article class="recipe">
-      <div class="recipe-main">
-        <img src="img/placeholder_bolo_cenoura.jpg" alt="Bolo de Cenoura com Cobertura de Chocolate">
+      <div class="recipe-main" style="translate: 175px 0px">
+        <img src="img/bolochocolate.jpeg" alt="Bolo de Cenoura com Cobertura de Chocolate">
         <h2>Bolo de Cenoura com Cobertura de Chocolate</h2>
         <p><strong>Rendimento:</strong> 10 porções • <strong>Preparo:</strong> 45 minutos •
           <strong>Dificuldade:</strong> Fácil</p>
@@ -53,26 +53,11 @@
           <li>Para cobertura, misture chocolate em pó, manteiga e leite e leve ao fogo até engrossar.</li>
         </ol>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn" onclick="startTimerFromRecipe(45)">Iniciar cronômetro 45 min</button>
           <button class="btn" onclick="copyIngredients()">Copiar ingredientes</button>
           <a class="btn" href="index.html">Voltar</a>
         </div>
       </div>
 
-      <aside class="recipe-aside">
-        <h4>Informações</h4>
-        <p><strong>Por que funciona:</strong> Receita clara e fácil de seguir.</p>
-        <div style="margin-top:12px">
-          <div class="timer-box">
-            <div id="timerDisplay">00:00</div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <button id="start" class="btn">Iniciar</button>
-              <button id="pause" class="btn">Pausar</button>
-              <button id="reset" class="btn">Zerar</button>
-            </div>
-          </div>
-        </div>
-      </aside>
     </article>
   </main>
 
