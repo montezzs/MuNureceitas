@@ -246,7 +246,7 @@ body {
   #pergunta {
     font-size: 1.2rem;
     font-weight: 600;
-    color: white;
+    color: var(--text);
   }
 
 .recipe-aside {
