@@ -8,16 +8,10 @@ modo noturno e interatividade — incluindo timers, animações e receitas organ
 ## Funcionalidades Principais
 - 🕒 Timer interativo para contagem regressiva (com som no fim)
 - 💡 Suporte a horas, minutos e segundos (ex: `2:30:00` ou `90`)
-- 🔄 Cronômetros individuais em cada receita
 - 🌙 Modo noturno com tema azul-claro
 - 🍋 Ícone de limão personalizado no site
 - 🖼️ Suporte para imagens de receitas (você pode adicionar manualmente)
-
-## Uso
-1. Digite o tempo no campo (em minutos ou no formato `hh:mm:ss`)
-2. Clique em **Iniciar**
-3. O cronômetro irá **decrescer** até chegar em zero.
-4. Ao terminar, tocará um som e aparecerá uma mensagem “⏰ Tempo esgotado!”
+- ⁉ Quiz de perguntas sobre receitas!
 
 ---
 
