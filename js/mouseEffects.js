@@ -1,4 +1,4 @@
-// js/mouseEffects.js - subtle cursor dot
+// js/mouseEffects.js - Um efeito simples de seguir o cursor do mouse
 (function(){
   const d = document.createElement('div'); 
   d.style.position='fixed'; 

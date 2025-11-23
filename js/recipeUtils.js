@@ -1,5 +1,5 @@
 // js/recipeUtils.js
-// Helpers para as páginas de receita (copiar ingredientes e iniciar contagem regressiva a partir da receita)
+// Helper para as páginas de receita (copiar ingredientes a partir da receita)
 
 (function(){
   // Copiar ingredientes para clipboard
@@ -12,16 +12,4 @@
     navigator.clipboard?.writeText(text).then(()=> alert('Ingredientes copiados!')).catch(()=> alert('Não foi possível copiar.'));
   };
 
-  // Iniciar contagem regressiva a partir da receita (minutes)
-  window.startTimerFromRecipe = function(minutes){
-    // limpa stopwatch caso esteja rodando (opcional)
-    if(window.pauseTimerGlobal) window.pauseTimerGlobal();
-
-    // chama a função de contagem regressiva global (que limpa intervalos anteriores)
-    if(window.startCountdownGlobal){
-      window.startCountdownGlobal(minutes);
-    } else {
-      alert('Contador não disponível no momento.');
-    }
-  };
 })();
